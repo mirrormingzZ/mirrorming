@@ -2,8 +2,10 @@ package cn.mirrorming.browser.config;
 
 import cn.mirrorming.browser.authentication.MirrorAuthenticationFailHandler;
 import cn.mirrorming.browser.authentication.MirrorAuthenticationSuccessHandler;
+import cn.mirrorming.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
+import cn.mirrorming.core.properties.SecurityConstants;
 import cn.mirrorming.core.properties.SecurityProperties;
-import cn.mirrorming.core.validate.ValidateCodeFilter;
+import cn.mirrorming.core.validate.MirrorValidateCodeSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -39,6 +40,12 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private MirrorValidateCodeSecurityConfig mirrorValidateCodeSecurityConfig;
+
+    @Autowired
+    private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -54,36 +61,48 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
-        validateCodeFilter.setFailureHandler(mirrorAuthenticationFailHandler);
-        validateCodeFilter.setSecurityProperties(securityProperties);
-        validateCodeFilter.afterPropertiesSet();
 
         http
-                //将自定义的验证码过滤器加在用户名密码过滤器前面
-                .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+                /**
+                 * ================表单登录功能配置================
+                 */
                 .formLogin()
-                .loginPage("/authentication/require")
-                .loginProcessingUrl("/authentication/form")
+                .loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
+                .loginProcessingUrl(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM)
                 .successHandler(mirrorAuthenticationSuccessHandler)
                 .failureHandler(mirrorAuthenticationFailHandler)
-                //记住我功能配置
+                .and()
+                /**
+                 * ==================验证码配置====================
+                 */
+                .apply(mirrorValidateCodeSecurityConfig)
+                .and()
+                /**
+                 * =================验证码登录配置=================
+                 */
+                .apply(smsCodeAuthenticationSecurityConfig)
+                /**
+                 * =================记住我功能配置=================
+                 */
                 .and()
                 .rememberMe()
                 .tokenRepository(persistentTokenRepository())
                 .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
                 .userDetailsService(userDetailsService)
-                //授权配置
+                /**
+                 * ===================授权配置=====================
+                 */
                 .and()
                 .authorizeRequests()
                 .antMatchers(
-                        "/authentication/require",
+                        SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
                         securityProperties.getBrowser().getLoginPage(),
-                        "/code/image"
-                ).permitAll()
+                        "/code/*").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .csrf().disable();
+
+
     }
 }

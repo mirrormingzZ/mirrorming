@@ -1,4 +1,4 @@
-package cn.mirrorming.core.validate.code;
+package cn.mirrorming.core.validate.image;
 
 import cn.mirrorming.core.properties.SecurityProperties;
 import cn.mirrorming.core.validate.ValidateCodeGenerator;
@@ -18,7 +18,7 @@ import java.util.Random;
  **/
 @Component
 @Data
-public class ImageCodeGenerator implements ValidateCodeGenerator {
+public class ImageValidateCodeGenerator implements ValidateCodeGenerator {
     @Autowired
     private SecurityProperties securityProperties;
 

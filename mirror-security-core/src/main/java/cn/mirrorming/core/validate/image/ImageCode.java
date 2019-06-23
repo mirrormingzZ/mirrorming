@@ -1,4 +1,4 @@
-package cn.mirrorming.core.validate.code;
+package cn.mirrorming.core.validate.image;
 
 import cn.mirrorming.core.validate.ValidateCode;
 import lombok.Data;

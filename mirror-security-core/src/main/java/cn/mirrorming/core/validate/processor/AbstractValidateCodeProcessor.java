@@ -3,6 +3,7 @@ package cn.mirrorming.core.validate.processor;
 import cn.mirrorming.core.validate.ValidateCode;
 import cn.mirrorming.core.validate.ValidateCodeException;
 import cn.mirrorming.core.validate.ValidateCodeGenerator;
+import cn.mirrorming.core.validate.ValidateCodeType;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
@@ -17,7 +18,6 @@ import java.util.Map;
  * @author: mirrorming
  * @create: 2019-06-21 10:01
  **/
-
 public abstract class AbstractValidateCodeProcessor<T extends ValidateCode> implements ValidateCodeProcessor {
     /**
      * 操作session的工具类
@@ -86,7 +86,7 @@ public abstract class AbstractValidateCodeProcessor<T extends ValidateCode> impl
      * @return
      */
     private ValidateCodeType getValidateCodeType(ServletWebRequest request) {
-        String type = StringUtils.substringBefore(getClass().getSimpleName(), "CodeProcessor");
+        String type = StringUtils.substringBefore(getClass().getSimpleName(), "ValidateCodeProcessor");
         return ValidateCodeType.valueOf(type.toUpperCase());
     }
 
@@ -140,5 +140,5 @@ public abstract class AbstractValidateCodeProcessor<T extends ValidateCode> impl
      * @param validateCode
      * @throws Exception
      */
-    protected abstract void send(ServletWebRequest request, T validateCode);
+    protected abstract void send(ServletWebRequest request, T validateCode) throws Exception;
 }

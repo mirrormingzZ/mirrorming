@@ -1,8 +1,7 @@
 package cn.mirrorming.core.validate;
 
 import cn.mirrorming.core.properties.SecurityProperties;
-import cn.mirrorming.core.validate.ValidateCodeGenerator;
-import cn.mirrorming.core.validate.code.ImageCodeGenerator;
+import cn.mirrorming.core.validate.image.ImageValidateCodeGenerator;
 import cn.mirrorming.core.validate.sms.DefaultSmsSender;
 import cn.mirrorming.core.validate.sms.SmsCodeSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,9 @@ public class ValidateCodeBeanConfig {
     private SecurityProperties securityProperties;
 
     @Bean
-    @ConditionalOnMissingBean(name = "imageCodeGenerator")  //当容器中没有名字为imageCodeGenerator的bean时会启用这个配置
+    @ConditionalOnMissingBean(name = "imageValidateCodeGenerator")  //当容器中没有名字为imageCodeGenerator的bean时会启用这个配置
     public ValidateCodeGenerator imageCodeGenerator() {
-        ImageCodeGenerator codeGenerator = new ImageCodeGenerator();
+        ImageValidateCodeGenerator codeGenerator = new ImageValidateCodeGenerator();
         codeGenerator.setSecurityProperties(securityProperties);
         return codeGenerator;
     }

@@ -12,15 +12,15 @@ import org.springframework.web.context.request.ServletWebRequest;
  * @author: mirrorming
  * @create: 2019-06-20 20:01
  **/
-@Component("smsCodeGenerator")
+@Component("smsValidateCodeGenerator")
 @Data
-public class SmsCodeGenerator implements ValidateCodeGenerator {
+public class SmsValidateCodeGenerator implements ValidateCodeGenerator {
     @Autowired
     private SecurityProperties securityProperties;
 
     @Override
     public SmsCode generate(ServletWebRequest request) {
         String code = RandomStringUtils.randomNumeric(securityProperties.getCode().getSms().getLength());
-        return new SmsCode(code, securityProperties.getCode().getSms().getLength());
+        return new SmsCode(code, securityProperties.getCode().getSms().getExpireIn());
     }
 }

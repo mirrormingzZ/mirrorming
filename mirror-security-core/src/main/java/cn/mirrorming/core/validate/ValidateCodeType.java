@@ -1,4 +1,4 @@
-package cn.mirrorming.core.validate.processor;
+package cn.mirrorming.core.validate;
 
 import cn.mirrorming.core.properties.SecurityConstants;
 

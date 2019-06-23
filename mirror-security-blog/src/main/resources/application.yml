@@ -25,3 +25,6 @@ mirror:
       image:
         length: 4
         url: /user,/user/*
+      sms:
+        length: 4
+        url: /user,/user/*
