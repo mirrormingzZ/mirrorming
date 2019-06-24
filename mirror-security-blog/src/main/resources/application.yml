@@ -1,5 +1,5 @@
 server:
-  port: 8060
+  port: 80
 
 spring:
   datasource:
@@ -18,9 +18,9 @@ spring:
 
 mirror:
   security:
-#    browser:
-#      loginPage: /demo-signIn.html
-#      loginType: JSON
+    #    browser:
+    #      loginPage: /demo-signIn.html
+    #      loginType: JSON
     code:
       image:
         length: 4
@@ -28,3 +28,9 @@ mirror:
       sms:
         length: 4
         url: /user,/user/*
+    social:
+      filterProcessesUrl: /qqlogin
+      qq:
+        providerId: callback
+        app-id: 101643825
+        app-secret: 55df307aa9d26e1d2c96ac8bdadc28e0

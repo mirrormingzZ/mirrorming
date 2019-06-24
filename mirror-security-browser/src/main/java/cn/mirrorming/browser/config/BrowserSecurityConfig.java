@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.social.security.SpringSocialConfigurer;
 
 import javax.sql.DataSource;
 
@@ -45,6 +46,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
+
+    @Autowired
+    private SpringSocialConfigurer mirrorSocialSecurityConfig;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -81,10 +85,15 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                  * =================验证码登录配置=================
                  */
                 .apply(smsCodeAuthenticationSecurityConfig)
+                .and()
+                /**
+                 * ==============SpringSocial配置================
+                 */
+                .apply(mirrorSocialSecurityConfig)
+                .and()
                 /**
                  * =================记住我功能配置=================
                  */
-                .and()
                 .rememberMe()
                 .tokenRepository(persistentTokenRepository())
                 .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
@@ -102,7 +111,5 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .csrf().disable();
-
-
     }
 }
